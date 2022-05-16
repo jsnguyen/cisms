@@ -1,0 +1,7 @@
+*.exe
+*.o
+*.txt
+*.swp
+*.vim
+*.so.dSYM
+*.so
