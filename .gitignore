@@ -5,3 +5,8 @@
 *.vim
 *.so.dSYM
 *.so
+.DS_Store
+*.png
+*.jpg
+*.pdf
+.ipynb_checkpoints

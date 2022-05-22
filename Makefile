@@ -13,7 +13,7 @@ CFLAGS=-O3 -Wall $(INCDIRS)
 LDFLAGS=-O3 -shared $(INCDIRS) $(LIBDIRS) $(LIBS)
 
 SRCDIR=src
-_SRCFILES=particle.c config.c
+_SRCFILES=particle.c config.c hydro.c
 SRCS=$(addprefix $(SRCDIR)/,$(_SRCFILES))
 
 OBJDIR=build
@@ -34,14 +34,14 @@ all: $(LIBDIR)/$(LIBNAME)
 $(LIBDIR)/$(LIBNAME): $(OBJS)
 	$(DIRGUARD)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
-	@ln -s $(ROOTDIR)/$(LIBDIR)/$(LIBNAME) $(INSTALLDIR)/$(INSTALLNAME)
+	@ln -sf $(ROOTDIR)/$(LIBDIR)/$(LIBNAME) $(INSTALLDIR)/$(INSTALLNAME)
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	$(DIRGUARD)
 	$(CC) $< -c -o $@ $(CFLAGS)
 
 install:
-	@ln -s $(LIBDIR)/$(LIBNAME) $(INSTALLDIR)/$(INSTALLNAME)
+	@ln -sf $(LIBDIR)/$(LIBNAME) $(INSTALLDIR)/$(INSTALLNAME)
 
 .SECONDARY: $(OBJS)
 .PHONY: clean

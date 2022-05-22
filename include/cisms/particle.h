@@ -9,18 +9,22 @@ typedef struct{
     int id;
     double mass;
     double diam;
+    double density;
+    double pressure;
     double *pos;
     double *vel;
+    double *acc;
 
-    double *x,*y,*z;
-    double *vx,*vy,*vz;
 } particle;
+
+void particle_init(particle *p);
+particle *multi_particle_init(int n_ps);
+void multi_particle_free(particle *ps, int n_ps);
 
 void particle_set(particle *p, int id, double mass, double diam, double pos[3], double vel[3]);
 
 void particle_print(particle b);
 
 void particle_write(particle b, const char* fn);
-
 
 #endif

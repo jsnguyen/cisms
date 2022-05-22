@@ -17,11 +17,12 @@ typedef struct{
 } config;
 
 config* config_create();
-void config_destroy(config *conf);
+void config_free(config *conf);
 void config_read(config *conf, const char* infile);
 void config_print(config *conf);
 
 char *ltrim(char *s);
 char *rtrim(char *s);
 char *trim(char *s);
+
 #endif

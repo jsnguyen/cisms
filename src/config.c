@@ -7,7 +7,7 @@ config* config_create(){
     return conf;
 }
 
-void config_destroy(config *conf){
+void config_free(config *conf){
 
     if(conf->fn){
         free(conf->fn);
