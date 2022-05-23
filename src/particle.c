@@ -91,6 +91,34 @@ void particle_set(particle *p, int id, double mass, double diam, double pos[3], 
     memcpy(p->vel, vel, 3*sizeof(double));
 }
 
+void particle_set_zero_acc(particle *p){
+    p->acc[0] = 0;
+    p->acc[1] = 0;
+    p->acc[2] = 0;
+}
+
+void particle_copy(particle *dest, particle *src){
+
+    dest->id = src->id;
+    dest->mass = src->mass;
+    dest->diam = src->diam;
+    dest->density = src->density;
+    dest->pressure = src->pressure;
+
+    dest->pos[0] = src->pos[0];
+    dest->pos[1] = src->pos[1];
+    dest->pos[2] = src->pos[2];
+
+    dest->vel[0] = src->vel[0];
+    dest->vel[1] = src->vel[1];
+    dest->vel[2] = src->vel[2];
+
+    dest->acc[0] = src->acc[0];
+    dest->acc[1] = src->acc[1];
+    dest->acc[2] = src->acc[2];
+
+}
+
 void particle_print(particle p){
     printf("id     = %i\n", p.id);
     printf("mass   = %f\n", p.mass);
@@ -104,6 +132,6 @@ void particle_print(particle p){
 void particle_write(particle p, const char* fn){
     FILE *f;
     f = fopen(fn,"a");
-    fprintf(f,"%f %f %f %f\n",p.pos[0],p.pos[1],p.pos[2], p.pressure);
+    fprintf(f,"%f %f %f %e\n",p.pos[0],p.pos[1],p.pos[2], p.density);
     fclose(f);
 }

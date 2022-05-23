@@ -6,7 +6,7 @@
 #include "string.h"
 #include "ctype.h"
 
-#define NPARAMS 4
+#define NPARAMS 8
 #define BUFFSIZE 255
 
 typedef struct{
@@ -14,6 +14,11 @@ typedef struct{
     int    n_iter;
     int    np;
     double td;
+    double poly_index;
+    double prop_const;
+    double smooth_len;
+    double drag_coeff;
+
 } config;
 
 config* config_create();

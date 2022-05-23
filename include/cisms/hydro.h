@@ -8,20 +8,24 @@
 #include "math.h"
 
 #define PI 3.14159265359
-#define POLYTROPIC_INDEX 1.5 // ideal gas
-#define PROP_CONST 0.1
-#define SMOOTHING_LENGTH 0.05
 #define G 6e-3
 
-void hydro_euler(int particle_index, particle *ps, int n_ps);
+void hydro_euler(int particle_index, particle *ps, int n_ps, double smooth_len);
 void gravity(int particle_index, particle *ps, int n_ps);
-void calc_density(int particle_index, particle *ps, int n_ps);
+void calc_density(int particle_index, particle *ps, int n_ps, double smooth_len, double prop_const, double poly_index);
 
 double calc_distance(particle *a, particle *b);
 double polytrope(double k, double density, double n);
 double quintic_spline(double r, double smoothing_length);
 double quintic_spline_gradient(int index, double *pos, double smoothing_length);
 
-void velocity_verlet(int particle_index, particle *ps, int n_ps, config conf);
+void calc_new_acc(particle *ps, int n_ps, double smooth_len);
+void half_velocity_verlet_position(particle *ps, particle *new_ps, int n_ps, double td);
+void half_velocity_verlet_velocity(particle *ps, particle *new_ps, int n_ps, double td);
+
+
+void check_hard_boundaries(particle *ps, int n_ps);
+
+void drag_term(particle *ps, int n_ps, double drag_coeff);
 
 #endif

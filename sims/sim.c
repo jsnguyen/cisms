@@ -13,9 +13,9 @@ static inline double get_rand_between(double a, double b) {
 
 void rand_pos_square(particle *ps, int n_ps){
     for(int i=0; i<n_ps; i++){
-        ps[i].pos[0] = get_rand_between(-1,1);
-        ps[i].pos[1] = get_rand_between(-1,1);
-        ps[i].pos[2] = get_rand_between(-1,1);
+        ps[i].pos[0] = get_rand_between(-0.9,0.9);
+        ps[i].pos[1] = get_rand_between(-0.9,0.9);
+        //ps[i].pos[2] = get_rand_between(-0.9,0.9);
     }
 }
 
@@ -31,6 +31,7 @@ int main(int argc, char* argv[]){
     config_print(conf);
 
     particle *ps;
+
     ps = multi_particle_init(conf->np);
 
     rand_pos_square(ps, conf->np);
@@ -39,7 +40,17 @@ int main(int argc, char* argv[]){
         ps[i].mass = 2.0/conf->np;
     }
 
-    printf("Beginning main simulation loop.\n");
+    for(int i=0; i<conf->np; i++){
+        calc_density(i, ps, conf->np, conf->smooth_len, conf->prop_const, conf->poly_index);
+    }
+
+    for(int i=0; i<conf->np; i++){
+        particle_write(ps[i], conf->fn);
+    }
+
+    FILE *f;
+    f = fopen(conf->fn,"w");
+    fclose(f);
 
     clock_t start_t = clock();
     clock_t elaps_t;
@@ -47,19 +58,27 @@ int main(int argc, char* argv[]){
     double cpu_t, loop_t;
     double loop_ravg=0;
 
-    FILE *f;
-    f = fopen(conf->fn,"w");
-    fclose(f);
+    printf("Beginning main simulation loop.\n");
 
     for(int i=0; i < conf->n_iter; i++){
+
         begin_loop_t = clock();
+
+        calc_new_acc(ps, conf->np, conf->smooth_len);
+        half_velocity_verlet_position(ps, ps, conf->np, conf->td);
+
+        for(int i=0; i<conf->np; i++){
+            calc_density(i, ps, conf->np, conf->smooth_len, conf->prop_const, conf->poly_index);
+        }
+
+        calc_new_acc(ps, conf->np, conf->smooth_len);
+        half_velocity_verlet_velocity(ps, ps, conf->np, conf->td);
+
+        check_hard_boundaries(ps, conf->np);
+        drag_term(ps, conf->np, conf->drag_coeff);
 
         for(int i=0; i<conf->np; i++){
             particle_write(ps[i], conf->fn);
-        }
-         
-        for(int i=0; i<conf->np; i++){
-            velocity_verlet(i, ps, conf->np, *conf);
         }
 
         elaps_t = clock();
@@ -77,6 +96,6 @@ int main(int argc, char* argv[]){
     multi_particle_free(ps, conf->np);
     config_free(conf);
     
-    printf("Success!\n");
+    printf("Done!\n");
     return 0;
 }

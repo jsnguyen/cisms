@@ -45,9 +45,20 @@ void config_read(config *conf, const char* infile){
                 case 3:
                     conf->td = atof(num);
                     break;
+                case 4:
+                    conf->poly_index = atof(num);
+                    break;
+                case 5:
+                    conf->prop_const = atof(num);
+                    break;
+                case 6:
+                    conf->smooth_len = atof(num);
+                    break;
+                case 7:
+                    conf->drag_coeff = atof(num);
+                    break;
 
             }
-
         }
     }
 

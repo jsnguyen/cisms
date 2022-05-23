@@ -10,3 +10,5 @@
 *.jpg
 *.pdf
 .ipynb_checkpoints
+*.vim
+*.gif
