@@ -13,8 +13,8 @@ static inline double get_rand_between(double a, double b) {
 
 void rand_pos_square(particle *ps, int n_ps){
     for(int i=0; i<n_ps; i++){
-        ps[i].pos[0] = get_rand_between(-0.9,0.9);
-        ps[i].pos[1] = get_rand_between(-9.9,9.9);
+        ps[i].pos[0] = get_rand_between(-9.9,9.9);
+        ps[i].pos[1] = get_rand_between(-0.9,0.9);
         //ps[i].pos[2] = get_rand_between(-0.9,0.9);
     }
 }

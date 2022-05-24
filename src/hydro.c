@@ -171,7 +171,7 @@ void check_hard_boundaries(int index, particle *ps, int n_ps, double lower_bound
 
         particle *p = &ps[i];
 
-        if (p->pos[index] <= -lower_boundary){
+        if (p->pos[index] <= lower_boundary){
             p->vel[index] = fabs(p->vel[index]);
         }
 
