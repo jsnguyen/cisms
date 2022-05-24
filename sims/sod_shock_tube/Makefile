@@ -1,9 +1,9 @@
 CC=gcc
 
-_INCDIRS=../include
+_INCDIRS=../../include
 INCDIRS=$(addprefix -I,$(_INCDIRS))
 
-_LIBDIRS=../lib
+_LIBDIRS=../../lib
 LIBDIRS=$(addprefix -L,$(_LIBDIRS))
 
 _LIBS=m cisms
@@ -12,13 +12,13 @@ LIBS=$(addprefix -l,$(_LIBS))
 CFLAGS=-O3 -Wall $(INCDIRS)
 LDFLAGS=-O3 $(INCDIRS) $(LIBDIRS) $(LIBS) -Wl,-rpath,$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))/../lib
 
-_SRCFILES=sim.c
+_SRCFILES=sod_shock_tube.c
 SRCS=$(_SRCFILES)
 
 _OBJFILES=$(_SRCFILES:%.c=%.o)
 OBJS=$(_OBJFILES)
 
-EXES=sim.exe
+EXES=sod_shock_tube.exe
 
 LIBNAME=libcisms.so
 

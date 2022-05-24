@@ -135,3 +135,11 @@ void particle_write(particle p, const char* fn){
     fprintf(f,"%f %f %f %e\n",p.pos[0],p.pos[1],p.pos[2], p.density);
     fclose(f);
 }
+
+void particle_write_binary(particle p, const char* fn){
+    FILE *f;
+    f = fopen(fn,"ab");
+    fwrite(p.pos, sizeof(double), 3, f);
+    fwrite(&p.density, sizeof(double), 1, f);
+    fclose(f);
+}

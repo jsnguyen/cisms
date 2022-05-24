@@ -31,4 +31,6 @@ void particle_print(particle b);
 
 void particle_write(particle b, const char* fn);
 
+void particle_write_binary(particle p, const char* fn);
+
 #endif

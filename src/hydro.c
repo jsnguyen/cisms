@@ -165,39 +165,24 @@ void half_velocity_verlet_velocity(particle *ps, particle *new_ps, int n_ps, dou
 
 }
 
-void check_hard_boundaries(particle *ps, int n_ps){
+void check_hard_boundaries(int index, particle *ps, int n_ps, double lower_boundary, double upper_boundary){
+
     for(int i=0; i<n_ps; i++){
+
         particle *p = &ps[i];
 
-        if (p->pos[0] <= -1){
-            p->vel[0] = fabs(p->vel[0]);
+        if (p->pos[index] <= -lower_boundary){
+            p->vel[index] = fabs(p->vel[index]);
         }
 
-        else if (p->pos[0] >= 1){
-            p->vel[0] = -fabs(p->vel[0]);
+        else if (p->pos[index] >= upper_boundary){
+            p->vel[index] = -fabs(p->vel[index]);
         }
-
-        else if (p->pos[1] <= -1){
-            p->vel[1] = fabs(p->vel[1]);
-        }
-
-        else if (p->pos[1] >= 1){
-            p->vel[1] = -fabs(p->vel[1]);
-        }
-
-        else if (p->pos[2] <= -1){
-            p->vel[2] = fabs(p->vel[2]);
-        }
-
-        else if (p->pos[2] >= 1){
-            p->vel[2] = -fabs(p->vel[2]);
-        }
-
 
     }
 }
 
-void drag_term(particle *ps, int n_ps, double drag_coeff){
+void simple_drag(particle *ps, int n_ps, double drag_coeff){
 
     for(int i=0; i<n_ps; i++){
         particle *p = &ps[i];

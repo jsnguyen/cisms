@@ -24,8 +24,8 @@ void half_velocity_verlet_position(particle *ps, particle *new_ps, int n_ps, dou
 void half_velocity_verlet_velocity(particle *ps, particle *new_ps, int n_ps, double td);
 
 
-void check_hard_boundaries(particle *ps, int n_ps);
+void check_hard_boundaries(int index, particle *ps, int n_ps, double lower_boundary, double upper_boundary);
 
-void drag_term(particle *ps, int n_ps, double drag_coeff);
+void simple_drag(particle *ps, int n_ps, double drag_coeff);
 
 #endif

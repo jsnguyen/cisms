@@ -21,7 +21,7 @@ void rand_pos_square(particle *ps, int n_ps){
 
 int main(int argc, char* argv[]){
     if(argc != 2){
-        printf("Usage: ./sim.exe <filename.config>\n");
+        printf("Usage: ./constrained_cube.exe <filename.config>\n");
         return 1;
     }
 
@@ -74,11 +74,14 @@ int main(int argc, char* argv[]){
         calc_new_acc(ps, conf->np, conf->smooth_len);
         half_velocity_verlet_velocity(ps, ps, conf->np, conf->td);
 
-        check_hard_boundaries(ps, conf->np);
-        drag_term(ps, conf->np, conf->drag_coeff);
+        check_hard_boundaries(0, ps, conf->np, -1, 1);
+        check_hard_boundaries(1, ps, conf->np, -1, 1);
+        check_hard_boundaries(2, ps, conf->np, -1, 1);
+
+        simple_drag(ps, conf->np, conf->drag_coeff);
 
         for(int i=0; i<conf->np; i++){
-            particle_write(ps[i], conf->fn);
+            particle_write_binary(ps[i], conf->fn);
         }
 
         elaps_t = clock();
