@@ -1,4 +1,4 @@
-CC=gcc
+CC=gcc-11
 
 _INCDIRS=include
 INCDIRS=$(addprefix -I,$(_INCDIRS))
@@ -9,8 +9,8 @@ LIBDIRS=$(addprefix -L,$(_LIBDIRS))
 _LIBS=m
 LIBS=$(addprefix -l,$(_LIBS))
 
-CFLAGS=-O3 -Wall $(INCDIRS)
-LDFLAGS=-O3 -shared $(INCDIRS) $(LIBDIRS) $(LIBS)
+CFLAGS=-O3 -Wall -fopenmp $(INCDIRS)
+LDFLAGS=-O3 -shared -fopenmp $(INCDIRS) $(LIBDIRS) $(LIBS)
 
 SRCDIR=src
 _SRCFILES=particle.c config.c hydro.c

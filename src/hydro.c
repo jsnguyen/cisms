@@ -8,6 +8,7 @@ void hydro_euler(int particle_index, particle *ps, int n_ps, double smooth_len){
 
     double new_acc[] = {0,0,0};
 
+#pragma omp for
     for(int i=0; i<n_ps; i++){
 
         if(i == particle_index){
@@ -65,6 +66,7 @@ void calc_density(int particle_index, particle *ps, int n_ps, double smooth_len,
     double weight;
 
     double density = 0;
+#pragma omp parallel for shared(density)
     for(int i=0; i<n_ps; i++){
 
         r = calc_distance(p, &ps[i]);
@@ -127,6 +129,7 @@ double quintic_spline_gradient(int index, double *pos, double smoothing_length){
 
 void calc_new_acc(particle *ps, int n_ps, double smooth_len){
 
+#pragma omp parallel for
     for(int i=0; i<n_ps; i++){
         particle_set_zero_acc(&ps[i]);
         hydro_euler(i, ps, n_ps, smooth_len);
@@ -137,6 +140,7 @@ void calc_new_acc(particle *ps, int n_ps, double smooth_len){
 
 void half_velocity_verlet_position(particle *ps, particle *new_ps, int n_ps, double td){
 
+#pragma omp for
     for(int i=0; i<n_ps; i++){
 
         particle *p = &ps[i];
@@ -152,6 +156,7 @@ void half_velocity_verlet_position(particle *ps, particle *new_ps, int n_ps, dou
 
 void half_velocity_verlet_velocity(particle *ps, particle *new_ps, int n_ps, double td){
 
+#pragma omp for 
     for(int i=0; i<n_ps; i++){
 
         particle *p = &ps[i];
@@ -167,6 +172,7 @@ void half_velocity_verlet_velocity(particle *ps, particle *new_ps, int n_ps, dou
 
 void check_hard_boundaries(int index, particle *ps, int n_ps, double lower_boundary, double upper_boundary){
 
+#pragma omp for 
     for(int i=0; i<n_ps; i++){
 
         particle *p = &ps[i];
@@ -184,6 +190,7 @@ void check_hard_boundaries(int index, particle *ps, int n_ps, double lower_bound
 
 void simple_drag(particle *ps, int n_ps, double drag_coeff){
 
+#pragma omp for
     for(int i=0; i<n_ps; i++){
         particle *p = &ps[i];
 

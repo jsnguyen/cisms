@@ -3,6 +3,7 @@
 
 #include "stdio.h"
 #include "stdlib.h"
+#include "omp.h"
 #include "cisms/config.h"
 #include "cisms/particle.h"
 #include "math.h"

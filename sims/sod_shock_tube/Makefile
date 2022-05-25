@@ -1,4 +1,4 @@
-CC=gcc
+CC=gcc-11
 
 _INCDIRS=../../include
 INCDIRS=$(addprefix -I,$(_INCDIRS))
@@ -9,9 +9,8 @@ LIBDIRS=$(addprefix -L,$(_LIBDIRS))
 _LIBS=m cisms
 LIBS=$(addprefix -l,$(_LIBS))
 
-CFLAGS=-O3 -Wall $(INCDIRS)
-LDFLAGS=-O3 $(INCDIRS) $(LIBDIRS) $(LIBS) -Wl,-rpath,$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))/../lib
-
+CFLAGS=-O3 -Wall -fopenmp $(INCDIRS)
+LDFLAGS=-O3 -fopenmp $(INCDIRS) $(LIBDIRS) $(LIBS) -Wl,-rpath,$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))/../lib
 _SRCFILES=sod_shock_tube.c
 SRCS=$(_SRCFILES)
 
