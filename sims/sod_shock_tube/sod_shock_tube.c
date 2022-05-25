@@ -58,36 +58,30 @@ int main(int argc, char* argv[]){
     f = fopen(conf->fn,"w");
     fclose(f);
 
-    /*
-    clock_t start_t = clock();
-    clock_t elaps_t;
-    clock_t begin_loop_t;
+    double start_t = omp_get_wtime();
+    double elaps_t;
+    double begin_loop_t;
     double cpu_t, loop_t;
     double loop_ravg=0;
-    */
-
      
-    double start; 
-    double end; 
-    start = omp_get_wtime(); 
-
     printf("Beginning main simulation loop.\n");
-
-#pragma omp parallel shared(ps)
     for(int i=0; i < conf->n_iter; i++){
 
+#pragma omp parallel shared(ps, i)
+        {
+
+        begin_loop_t = omp_get_wtime();
+
         calc_new_acc(ps, conf->np, conf->smooth_len);
-#pragma omp barrier
-        half_velocity_verlet_position(ps, ps, conf->np, conf->td);
+        half_velocity_verlet_position(ps, conf->np, conf->td);
 
 #pragma omp for
-        for(int i=0; i<conf->np; i++){
-            calc_density(i, ps, conf->np, conf->smooth_len, conf->prop_const, conf->poly_index);
+        for(int j=0; j<conf->np; j++){
+            calc_density(j, ps, conf->np, conf->smooth_len, conf->prop_const, conf->poly_index);
         }
 
         calc_new_acc(ps, conf->np, conf->smooth_len);
-#pragma omp barrier
-        half_velocity_verlet_velocity(ps, ps, conf->np, conf->td);
+        half_velocity_verlet_velocity(ps, conf->np, conf->td);
 
         check_hard_boundaries(0, ps, conf->np, 0, 10);
         check_hard_boundaries(1, ps, conf->np, 0, 1);
@@ -95,30 +89,22 @@ int main(int argc, char* argv[]){
 
         simple_drag(ps, conf->np, conf->drag_coeff);
 
-#pragma omp barrier
-        for(int i=0; i<conf->np; i++){
-            particle_write_binary(ps[i], conf->fn);
         }
 
-#pragma omp single
-        {
-            if(i%100==0) printf("%d/%d\n", i, conf->n_iter);
-            fflush(stdout);
+        for(int j=0; j<conf->np; j++){
+            particle_write_binary(ps[j], conf->fn);
         }
-        /*
-        elaps_t = clock();
-        cpu_t = (double) (elaps_t - start_t) / CLOCKS_PER_SEC;
-        loop_t = (double) (elaps_t - begin_loop_t) / CLOCKS_PER_SEC;
+
+        elaps_t = omp_get_wtime();
+        cpu_t = (double) (elaps_t - start_t);
+        loop_t = (double) (elaps_t - begin_loop_t);
         loop_ravg = (loop_t + (i * loop_ravg)) / (i + 1);
 
         printf("\r[%.2f%%] || elapsed: %.3fs ||  est time comp: %.3fs || avg loop time: %.3fs ||", (double) 100*(i+1)/conf->n_iter, cpu_t, loop_ravg*(conf->n_iter-1-i), loop_ravg);
 
         fflush(stdout);
-        */
-    }
 
-    end = omp_get_wtime(); 
-    printf("Time = %.2fs\n", end-start);
+    }
 
     printf("\n");
 

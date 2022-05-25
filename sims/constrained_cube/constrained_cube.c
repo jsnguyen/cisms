@@ -65,14 +65,14 @@ int main(int argc, char* argv[]){
         begin_loop_t = clock();
 
         calc_new_acc(ps, conf->np, conf->smooth_len);
-        half_velocity_verlet_position(ps, ps, conf->np, conf->td);
+        half_velocity_verlet_position(ps, conf->np, conf->td);
 
         for(int i=0; i<conf->np; i++){
             calc_density(i, ps, conf->np, conf->smooth_len, conf->prop_const, conf->poly_index);
         }
 
         calc_new_acc(ps, conf->np, conf->smooth_len);
-        half_velocity_verlet_velocity(ps, ps, conf->np, conf->td);
+        half_velocity_verlet_velocity(ps, conf->np, conf->td);
 
         check_hard_boundaries(0, ps, conf->np, -1, 1);
         check_hard_boundaries(1, ps, conf->np, -1, 1);

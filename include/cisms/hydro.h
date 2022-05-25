@@ -21,8 +21,8 @@ double quintic_spline(double r, double smoothing_length);
 double quintic_spline_gradient(int index, double *pos, double smoothing_length);
 
 void calc_new_acc(particle *ps, int n_ps, double smooth_len);
-void half_velocity_verlet_position(particle *ps, particle *new_ps, int n_ps, double td);
-void half_velocity_verlet_velocity(particle *ps, particle *new_ps, int n_ps, double td);
+void half_velocity_verlet_position(particle *ps, int n_ps, double td);
+void half_velocity_verlet_velocity(particle *ps, int n_ps, double td);
 
 
 void check_hard_boundaries(int index, particle *ps, int n_ps, double lower_boundary, double upper_boundary);
