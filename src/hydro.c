@@ -27,7 +27,7 @@ void hydro_euler(int particle_index, particle *ps, int n_ps, double smooth_len){
 
 }
 
-void gravity(int particle_index, particle *ps, int n_ps){
+void gravity(int particle_index, particle *ps, int n_ps, double max_len, double strength){
 
     double dr[3];
     double r;
@@ -38,15 +38,27 @@ void gravity(int particle_index, particle *ps, int n_ps){
             continue;
         }
 
-        dr[0] = ps[particle_index].pos[0] - ps[i].pos[0];
-        dr[1] = ps[particle_index].pos[1] - ps[i].pos[1];
-        dr[2] = ps[particle_index].pos[2] - ps[i].pos[2];
+        ps[particle_index].pos[0] = ps[particle_index].pos[0] - floor(ps[particle_index].pos[0] / max_len) * max_len;
+        ps[particle_index].pos[1] = ps[particle_index].pos[1] - floor(ps[particle_index].pos[1] / max_len) * max_len;
+        ps[particle_index].pos[2] = ps[particle_index].pos[2] - floor(ps[particle_index].pos[2] / max_len) * max_len;
+
+        dr[0] = ps[i].pos[0] - ps[particle_index].pos[0];
+        dr[1] = ps[i].pos[1] - ps[particle_index].pos[1];
+        dr[2] = ps[i].pos[2] - ps[particle_index].pos[2];
+
+        dr[0] = dr[0] - (int) (dr[0] / max_len) * max_len;
+        dr[1] = dr[1] - (int) (dr[1] / max_len) * max_len;
+        dr[2] = dr[2] - (int) (dr[2] / max_len) * max_len;
 
         r = sqrt(dr[0]*dr[0]+dr[1]*dr[1]+dr[2]*dr[2]);
 
-        ps[particle_index].acc[0] += dr[0]/r * G * ps[particle_index].mass * ps[i].mass / (r*r);
-        ps[particle_index].acc[1] += dr[1]/r * G * ps[particle_index].mass * ps[i].mass / (r*r);
-        ps[particle_index].acc[2] += dr[2]/r * G * ps[particle_index].mass * ps[i].mass / (r*r);
+        if(r < 0.1){
+            r = r*10;
+        }
+
+        ps[particle_index].acc[0] += dr[0]/r * strength * ps[particle_index].mass * ps[i].mass / (r*r);
+        ps[particle_index].acc[1] += dr[1]/r * strength * ps[particle_index].mass * ps[i].mass / (r*r);
+        ps[particle_index].acc[2] += dr[2]/r * strength * ps[particle_index].mass * ps[i].mass / (r*r);
 
     }
 
@@ -126,10 +138,19 @@ void calc_new_acc(particle *ps, int n_ps, double smooth_len){
 
         particle_set_zero_acc(&ps[i]);
         hydro_euler(i, ps, n_ps, smooth_len);
-        //gravity(i, ps, n_ps);
         
     }
 
+}
+
+void calc_gravity_acc(particle *ps, int n_ps, double smooth_len, double max_len, double strength){
+
+#pragma omp for
+    for(int i=0; i<n_ps; i++){
+
+        gravity(i, ps, n_ps, max_len, strength);
+
+    }
 }
 
 void half_velocity_verlet_position(particle *ps, int n_ps, double td){
@@ -173,6 +194,24 @@ void check_hard_boundaries(int index, particle *ps, int n_ps, double lower_bound
 
     }
 }
+
+void check_periodic_boundaries(int index, particle *ps, int n_ps, double lower_boundary, double upper_boundary){
+
+    double size = upper_boundary-lower_boundary;
+#pragma omp for
+    for(int i=0; i<n_ps; i++){
+
+        if (ps[i].pos[index] <= lower_boundary){
+            ps[i].pos[index] = ps[i].pos[index] + size;
+        }
+
+        else if (ps[i].pos[index] >= upper_boundary){
+            ps[i].pos[index] = ps[i].pos[index] - size;
+        }
+
+    }
+}
+
 
 void simple_drag(particle *ps, int n_ps, double drag_coeff){
 

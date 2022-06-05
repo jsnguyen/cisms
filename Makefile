@@ -1,4 +1,4 @@
-CC=gcc-11
+CC=gcc
 
 _INCDIRS=include
 INCDIRS=$(addprefix -I,$(_INCDIRS))
@@ -21,11 +21,11 @@ _OBJFILES=$(_SRCFILES:%.c=%.o)
 OBJS=$(addprefix $(OBJDIR)/,$(_OBJFILES))
 
 LIBDIR=lib
-LIBNAME=libcisms.so
+LIBNAME=libcisms.a
 
 ROOTDIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 INSTALLDIR=/usr/local/lib
-INSTALLNAME=libcisms.so
+INSTALLNAME=libcisms.a
 
 DIRGUARD=@mkdir -p $(@D)
 
@@ -33,15 +33,12 @@ all: $(LIBDIR)/$(LIBNAME)
 
 $(LIBDIR)/$(LIBNAME): $(OBJS)
 	$(DIRGUARD)
-	$(CC) $(OBJS) -o $@ $(LDFLAGS)
-	@ln -sf $(ROOTDIR)/$(LIBDIR)/$(LIBNAME) $(INSTALLDIR)/$(INSTALLNAME)
+	#$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	@ar rcs $@ $(OBJS)
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	$(DIRGUARD)
 	$(CC) $< -c -o $@ $(CFLAGS)
-
-install:
-	@ln -sf $(LIBDIR)/$(LIBNAME) $(INSTALLDIR)/$(INSTALLNAME)
 
 .SECONDARY: $(OBJS)
 .PHONY: clean
@@ -49,5 +46,4 @@ install:
 clean:
 	rm $(OBJDIR)/*.o
 	rm $(LIBDIR)/$(LIBNAME)
-	rm $(INSTALLDIR)/$(INSTALLNAME)
 	rmdir $(OBJDIR) $(LIBDIR)

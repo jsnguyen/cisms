@@ -20,14 +20,10 @@ void rand_pos_square(particle *ps, int n_ps){
 }
 
 int main(int argc, char* argv[]){
-    if(argc != 2){
-        printf("Usage: ./constrained_cube.exe <filename.config>\n");
-        return 1;
-    }
 
     config *conf;
     conf = config_create();
-    config_read(conf,argv[1]);
+    config_read(conf,"constrained_square.config");
     config_print(conf);
 
     particle *ps;
@@ -44,13 +40,13 @@ int main(int argc, char* argv[]){
         calc_density(i, ps, conf->np, conf->smooth_len, conf->prop_const, conf->poly_index);
     }
 
-    for(int i=0; i<conf->np; i++){
-        particle_write(ps[i], conf->fn);
-    }
-
     FILE *f;
     f = fopen(conf->fn,"w");
     fclose(f);
+
+    for(int i=0; i<conf->np; i++){
+        particle_write_binary(ps[i], conf->fn);
+    }
 
     clock_t start_t = clock();
     clock_t elaps_t;
@@ -80,8 +76,8 @@ int main(int argc, char* argv[]){
 
         simple_drag(ps, conf->np, conf->drag_coeff);
 
-        for(int i=0; i<conf->np; i++){
-            particle_write_binary(ps[i], conf->fn);
+        for(int j=0; j<conf->np; j++){
+            particle_write_binary(ps[j], conf->fn);
         }
 
         elaps_t = clock();

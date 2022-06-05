@@ -9,17 +9,18 @@ LIBDIRS=$(addprefix -L,$(_LIBDIRS))
 _LIBS=m cisms
 LIBS=$(addprefix -l,$(_LIBS))
 
-CFLAGS=-O3 -Wall -fopenmp $(INCDIRS)
-LDFLAGS=-O3 -fopenmp $(INCDIRS) $(LIBDIRS) $(LIBS) -Wl,-rpath,$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))/../lib
-_SRCFILES=sod_shock_tube.c
+CFLAGS=-O3 -Wall $(INCDIRS) -fopenmp
+LDFLAGS=-O3 $(INCDIRS) $(LIBDIRS) $(LIBS) -Wl,-rpath,$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))/../lib -fopenmp
+
+_SRCFILES=constrained_square.c
 SRCS=$(_SRCFILES)
 
 _OBJFILES=$(_SRCFILES:%.c=%.o)
 OBJS=$(_OBJFILES)
 
-EXES=sod_shock_tube.exe
+EXES=constrained_square.exe
 
-LIBNAME=libcisms.so
+LIBNAME=libcisms.a
 
 DIRGUARD=@mkdir -p $(@D)
 

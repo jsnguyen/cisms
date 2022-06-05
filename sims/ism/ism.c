@@ -20,32 +20,22 @@ void rand_pos(particle *ps, int offset, int n_ps, double x_low, double x_high, d
     for(int i=offset; i<n_ps; i++){
         ps[i].pos[0] = get_rand_between(x_low, x_high);
         ps[i].pos[1] = get_rand_between(y_low, y_high);
-        ps[i].pos[2] = get_rand_between(z_low, z_high);
+        //ps[i].pos[2] = get_rand_between(z_low, z_high);
     }
 }
 
-void uniform_density_pos(particle *ps, int n_ps, int offset, double smooth_len, double number_density, double x_low, double x_high, double y_low, double y_high){
-
-    double dx = x_high - x_low;
-    double dy = y_high - y_low;
-
-    int n_x = cbrt(number_density)*dx;
-    int n_y = cbrt(number_density)*dy;
-
-    double spacing = 1/cbrt(number_density);
-
-    for(int j=0; j<n_y; j++){
-        for(int i=0; i<n_x; i++){
-            ps[offset+i+j*n_x].pos[0] = x_low + spacing/2.0 + i*spacing;
-            ps[offset+i+j*n_x].pos[1] = y_low + spacing/2.0 + j*spacing;
-        }
+void rand_vel(particle *ps, int offset, int n_ps, double v_low, double v_high){
+    for(int i=offset; i<n_ps; i++){
+        ps[i].vel[0] = get_rand_between(v_low, v_high);
+        ps[i].vel[1] = get_rand_between(v_low, v_high);
+        //ps[i].vel[2] = get_rand_between(v_low, v_high);
     }
-
 }
+
 
 int main(int argc, char* argv[]){
 
-    char *config_filename = "sod_shock_tube.config";
+    char *config_filename = "ism.config";
 
     config *conf;
     conf = config_create();
@@ -54,30 +44,24 @@ int main(int argc, char* argv[]){
 
     particle *ps;
 
-    double l_number_density = pow(8,5  );
-    double r_number_density = pow(8,5-2);
+    double x_low  = 0.0;
+    double x_high = 1.0;
+    double y_low  = 0.0;
+    double y_high = 1.0;
+    double z_low  = 0.0;
+    double z_high = 1.0;
 
-    double l_x_low  = 0.0;
-    double l_x_high = 5.0;
-    double l_y_low  = 0.0;
-    double l_y_high = 1.0;
-
-    double r_x_low  =  5.0;
-    double r_x_high = 10.0;
-    double r_y_low  =  0.0;
-    double r_y_high =  1.0;
-
-    int n_left  = cbrt(l_number_density) * (l_x_high - l_x_low) * cbrt(l_number_density) * (l_y_high - l_y_low);
-    int n_right = cbrt(r_number_density) * (r_x_high - r_x_low) * cbrt(r_number_density) * (r_y_high - r_y_low);
-
-    int np = n_left+n_right;
+    int np = conf->np;
     ps = multi_particle_init(np);
 
-    uniform_density_pos(ps, np, 0 , conf->smooth_len, l_number_density, l_x_low, l_x_high, l_y_low, l_y_high);
-    uniform_density_pos(ps, np, n_left, conf->smooth_len, r_number_density, r_x_low, r_x_high, r_y_low, r_y_high);
+    rand_pos(ps, 0, np, x_low, x_high, y_low, y_high, z_low, z_high);
+
+    double v_low  = -0.01;
+    double v_high = 0.01;
+    rand_vel(ps, 0, np, v_low, v_high);
 
     for (int i=0; i<np; i++){
-        ps[i].mass = 1.0/np;
+        ps[i].mass = 1.0;
     }
 
     for(int i=0; i<np; i++){
@@ -91,6 +75,8 @@ int main(int argc, char* argv[]){
     for(int i=0; i<np; i++){
         particle_write_binary(ps[i], conf->fn);
     }
+
+    double gravity_strength = 1e-6;
 
     double start_t = omp_get_wtime();
     double elaps_t;
@@ -107,6 +93,7 @@ int main(int argc, char* argv[]){
         begin_loop_t = omp_get_wtime();
 
         calc_new_acc(ps, np, conf->smooth_len);
+        calc_gravity_acc(ps, np, conf->smooth_len, 1, gravity_strength);
         half_velocity_verlet_position(ps, np, conf->td);
 
 #pragma omp for
@@ -115,11 +102,12 @@ int main(int argc, char* argv[]){
         }
 
         calc_new_acc(ps, np, conf->smooth_len);
+        calc_gravity_acc(ps, np, conf->smooth_len, 1, gravity_strength);
         half_velocity_verlet_velocity(ps, np, conf->td);
 
-        check_hard_boundaries(0, ps, np, 0, 10);
-        check_hard_boundaries(1, ps, np, 0, 1);
-        check_hard_boundaries(2, ps, np, 0, 1);
+        check_periodic_boundaries(0, ps, np, 0, 1);
+        check_periodic_boundaries(1, ps, np, 0, 1);
+        //check_periodic_boundaries(2, ps, np, 0, 1);
 
         simple_drag(ps, np, conf->drag_coeff);
 
