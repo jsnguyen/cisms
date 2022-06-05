@@ -18,6 +18,10 @@ To run a simulation:
 
 ```./sim_name.exe```
 
+To clean up a simulation folder or the main library:
+
+```make clean```
+
 Examine the `.config` files for details of each simulation.
 
 Sample analysis is given in `analysis/cisms_analysis.ipynb`. 
