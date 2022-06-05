@@ -9,11 +9,13 @@ To compile simply:
 To compile a simulation:
 
 ```cd sims/sim_name```
+
 ```make```
 
 To run a simulation:
 
 ```cd sims/sim_name```
+
 ```./sim_name.exe```
 
 Examine the `.config` files for details of each simulation.
