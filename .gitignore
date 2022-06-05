@@ -13,3 +13,5 @@
 *.vim
 *.gif
 *.dat
+*.out
+*.a

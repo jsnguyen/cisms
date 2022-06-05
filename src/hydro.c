@@ -99,13 +99,13 @@ double quintic_spline(double r, double smoothing_length){
     double q = r/smoothing_length;
 
     if ((q >= 0) && (q < 1)) {
-        return (1.0/120.0)*(pow((3-q),5) - 6*pow((2-q),5) + 15*pow((1-q),5));
+        return (7.0/(478.0*PI))*(pow((3-q),5) - 6*pow((2-q),5) + 15*pow((1-q),5));
         
     } else if((q >= 1) && (q < 2)) {
         return (7.0/(478.0*PI))*(pow((3-q),5) - 6*pow((2-q),5));
 
     } else if((q >= 2) && (q < 3)) {
-        return (1/(120.0*PI))*pow((3-q),5);
+        return (7.0/(478.0*PI))*pow((3-q),5);
 
     } else {
         return 0;

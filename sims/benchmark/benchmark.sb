@@ -1,0 +1,23 @@
+#!/bin/bash
+## Example of OpenMP code running on a shared node
+#SBATCH --job-name="benchmark"
+#SBATCH --output="benchmark.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=128
+#SBATCH --mem=32G
+#SBATCH --export=ALL
+#SBATCH --account=csd453
+#SBATCH -t 08:00:00
+
+module purge
+module load slurm
+module load cpu
+module load aocc
+module load gcc
+
+for N_THREADS in 1 2 4 8 16 32 64 128; do
+    export OMP_NUM_THREADS=${N_THREADS}
+    time ./benchmark.exe
+done
