@@ -25,3 +25,7 @@ To clean up a simulation folder or the main library:
 Examine the `.config` files for details of each simulation.
 
 Sample analysis is given in `analysis/cisms_analysis.ipynb`. 
+
+Note that for MacOS, you probably have to change the default `gcc` compiler to something else.
+
+IE: `gcc` -> `gcc-12`
